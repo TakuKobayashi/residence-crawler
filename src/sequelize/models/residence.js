@@ -8,7 +8,15 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      this.hasOne(models.Geometry, {
+        as: 'geometry',
+        foreignKey: 'data_id',
+        constraints: false,
+        scope: {
+          data_type: 'Residence',
+        },
+      });
+      this.hasMany(models.Property, { foreignKey: 'residence_id', as: 'properties' });
     }
   }
   Residence.init(
