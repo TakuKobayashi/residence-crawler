@@ -26,7 +26,7 @@ module.exports = {
       },
       constructed_at: {
         type: Sequelize.DATE,
-      }
+      },
     });
     await queryInterface.addIndex('residences', ['address'], { unique: true });
   },
