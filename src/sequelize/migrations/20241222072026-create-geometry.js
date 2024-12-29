@@ -7,29 +7,38 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       data_type: {
-        type: Sequelize.STRING
+        allowNull: false,
+        type: Sequelize.STRING,
       },
       data_id: {
-        type: Sequelize.INTEGER
+        allowNull: false,
+        type: Sequelize.INTEGER,
       },
       geometry_type: {
-        type: Sequelize.STRING
+        allowNull: false,
+        type: Sequelize.STRING,
       },
       lat: {
-        type: Sequelize.FLOAT
+        allowNull: false,
+        type: Sequelize.FLOAT,
+        defaultValue: 0,
       },
       lon: {
-        type: Sequelize.FLOAT
+        allowNull: false,
+        type: Sequelize.FLOAT,
+        defaultValue: 0,
       },
       geohash: {
-        type: Sequelize.STRING
-      }
+        type: Sequelize.STRING,
+      },
     });
+    await queryInterface.addIndex('geometries', ['data_type', 'data_id']);
+    await queryInterface.addIndex('geometries', ['geohash']);
   },
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('geometries');
-  }
+  },
 };

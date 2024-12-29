@@ -1,23 +1,19 @@
 'use strict';
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('residences', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       importFrom: {
-        type: Sequelize.STRING
+        allowNull: false,
+        type: Sequelize.INTEGER,
       },
       name: {
-        allowNull: false,
-        type: Sequelize.STRING,
-      },
-      url: {
         allowNull: false,
         type: Sequelize.STRING,
       },
@@ -28,10 +24,15 @@ module.exports = {
       max_floor: {
         allowNull: false,
         type: Sequelize.STRING,
-      }
+      },
+      route_caption: {
+        allowNull: false,
+        type: Sequelize.STRING,
+      },
     });
+    await queryInterface.addIndex('residences', ['address'], { unique: true });
   },
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('residences');
-  }
+  },
 };

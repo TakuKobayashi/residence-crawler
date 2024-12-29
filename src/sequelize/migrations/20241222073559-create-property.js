@@ -2,30 +2,63 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Properties', {
+    await queryInterface.createTable('properties', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
-      lat: {
-        type: Sequelize.FLOAT
-      },
-      lon: {
-        type: Sequelize.FLOAT
-      },
-      createdAt: {
+      residence_id: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.INTEGER,
       },
-      updatedAt: {
+      url: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.STRING,
+      },
+      route_caption: {
+        type: Sequelize.STRING,
+      },
+      floor_number: {
+        type: Sequelize.INTEGER,
+      },
+      rent_price: {
+        allowNull: false,
+        type: Sequelize.FLOAT,
+        defaultValue: 0,
+      },
+      management_fee: {
+        allowNull: false,
+        type: Sequelize.FLOAT,
+        defaultValue: 0,
+      },
+      deposit: {
+        allowNull: false,
+        type: Sequelize.FLOAT,
+        defaultValue: 0,
+      },
+      gratuity_fee: {
+        allowNull: false,
+        type: Sequelize.FLOAT,
+        defaultValue: 0,
+      },
+      floor_plan: {
+        type: Sequelize.STRING,
+      },
+      area: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        defaultValue: 0,
+      },
+      options: {
+        type: Sequelize.TEXT,
+      },
     });
+    await queryInterface.addIndex('properties', ['url'], { unique: true });
+    await queryInterface.addIndex('properties', ['residence_id']);
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Properties');
-  }
+    await queryInterface.dropTable('properties');
+  },
 };
