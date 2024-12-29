@@ -14,10 +14,16 @@ module.exports = (sequelize, DataTypes) => {
   Residence.init(
     {
       name: DataTypes.STRING,
+      address: DataTypes.STRING,
+      max_floor: DataTypes.STRING,
+      route_caption: DataTypes.STRING,
+      constructed_at: DataTypes.DATE,
     },
     {
       sequelize,
       modelName: 'Residence',
+      tableName: 'residences',
+      timestamps: false,
     },
   );
   return Residence;

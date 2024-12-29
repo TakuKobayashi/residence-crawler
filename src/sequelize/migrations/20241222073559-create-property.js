@@ -14,7 +14,7 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       // 情報の取得先まずはsuumoからのみ
-      importFrom: {
+      import_from: {
         allowNull: false,
         type: Sequelize.INTEGER,
       },

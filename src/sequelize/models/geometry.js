@@ -13,12 +13,19 @@ module.exports = (sequelize, DataTypes) => {
   }
   Geometry.init(
     {
+      data_type: DataTypes.STRING,
+      data_id: DataTypes.INTEGER,
+      geometry_type: DataTypes.STRING,
+      group_uuid: DataTypes.STRING,
       lat: DataTypes.FLOAT,
       lon: DataTypes.FLOAT,
+      geohash: DataTypes.STRING,
     },
     {
       sequelize,
       modelName: 'Geometry',
+      tableName: 'geometries',
+      timestamps: false,
     },
   );
   return Geometry;
