@@ -21,7 +21,6 @@ crawlCommand
     console.log('suumo crawler');
   });
 
-
 program.addCommand(crawlCommand);
 
 const exportCommand = new Command('export');
@@ -30,7 +29,7 @@ exportCommand
   .command('sql')
   .description('')
   .action(async (options: any) => {
-//    await exportToInsertSQL();
+    //    await exportToInsertSQL();
   });
 
 program.addCommand(exportCommand);

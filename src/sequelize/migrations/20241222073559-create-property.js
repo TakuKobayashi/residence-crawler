@@ -13,11 +13,17 @@ module.exports = {
         allowNull: false,
         type: Sequelize.INTEGER,
       },
-      url: {
+      // 情報の取得先まずはsuumoからのみ
+      importFrom: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+      },
+      category: {
         allowNull: false,
         type: Sequelize.STRING,
       },
-      route_caption: {
+      url: {
+        allowNull: false,
         type: Sequelize.STRING,
       },
       floor_number: {

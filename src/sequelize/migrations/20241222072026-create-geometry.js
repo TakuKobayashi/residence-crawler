@@ -17,7 +17,12 @@ module.exports = {
         allowNull: false,
         type: Sequelize.INTEGER,
       },
+      // GeoJsonのtypeを "Point" | "MultiPoint" | "LineString" | "MultiLineString" | "Polygon" | "MultiPolygon" | "GeometryCollection" | "Feature" | "FeatureCollection"
       geometry_type: {
+        allowNull: false,
+        type: Sequelize.STRING,
+      },
+      group_uuid: {
         allowNull: false,
         type: Sequelize.STRING,
       },
@@ -36,6 +41,7 @@ module.exports = {
       },
     });
     await queryInterface.addIndex('geometries', ['data_type', 'data_id']);
+    await queryInterface.addIndex('geometries', ['group_uuid']);
     await queryInterface.addIndex('geometries', ['geohash']);
   },
   async down(queryInterface, Sequelize) {

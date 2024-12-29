@@ -1,7 +1,5 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Geometry extends Model {
     /**
@@ -13,12 +11,15 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
-  Geometry.init({
-    lat: DataTypes.FLOAT,
-    lon: DataTypes.FLOAT
-  }, {
-    sequelize,
-    modelName: 'Geometry',
-  });
+  Geometry.init(
+    {
+      lat: DataTypes.FLOAT,
+      lon: DataTypes.FLOAT,
+    },
+    {
+      sequelize,
+      modelName: 'Geometry',
+    },
+  );
   return Geometry;
 };

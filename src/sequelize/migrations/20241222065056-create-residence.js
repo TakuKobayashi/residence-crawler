@@ -9,10 +9,6 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      importFrom: {
-        allowNull: false,
-        type: Sequelize.INTEGER,
-      },
       name: {
         allowNull: false,
         type: Sequelize.STRING,
@@ -26,9 +22,11 @@ module.exports = {
         type: Sequelize.STRING,
       },
       route_caption: {
-        allowNull: false,
         type: Sequelize.STRING,
       },
+      constructed_at: {
+        type: Sequelize.DATE,
+      }
     });
     await queryInterface.addIndex('residences', ['address'], { unique: true });
   },
