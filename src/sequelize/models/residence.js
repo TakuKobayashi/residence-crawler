@@ -8,24 +8,20 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      this.hasOne(models.Geometry, {
-        as: 'geometry',
-        foreignKey: 'data_id',
-        constraints: false,
-        scope: {
-          data_type: 'Residence',
-        },
-      });
-      this.hasMany(models.Property, { foreignKey: 'residence_id', as: 'properties' });
+      this.hasMany(models.Property, { sourceKey: 'uuid', foreignKey: 'residence_uuid', as: 'properties' });
     }
   }
   Residence.init(
     {
+      uuid: DataTypes.STRING,
       name: DataTypes.STRING,
       address: DataTypes.STRING,
       max_floor: DataTypes.STRING,
       route_caption: DataTypes.STRING,
-      constructed_at: DataTypes.DATE,
+      constructed_date: DataTypes.DATE,
+      lat: DataTypes.FLOAT,
+      lon: DataTypes.FLOAT,
+      geohash: DataTypes.STRING,
     },
     {
       sequelize,

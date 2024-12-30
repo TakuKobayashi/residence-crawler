@@ -1,5 +1,8 @@
 'use strict';
-/** @type {import('sequelize-cli').Migration} */
+
+const { ImportFroms } = require('../enums/import-froms');
+const { PublishStates } = require('../enums/publish-states');
+
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('properties', {
@@ -7,16 +10,17 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER,
+        type: Sequelize.BIGINT,
       },
-      residence_id: {
+      residence_uuid: {
         allowNull: false,
-        type: Sequelize.INTEGER,
+        type: Sequelize.STRING,
       },
       // 情報の取得先まずはsuumoからのみ
       import_from: {
         allowNull: false,
         type: Sequelize.INTEGER,
+        defaultValue: ImportFroms.suumo,
       },
       category: {
         allowNull: false,
@@ -57,12 +61,20 @@ module.exports = {
         type: Sequelize.INTEGER,
         defaultValue: 0,
       },
-      options: {
+      infomation_updated_date: {
+        type: Sequelize.DATE,
+      },
+      publish_state: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        defaultValue: PublishStates.publishing,
+      },
+      extra_info: {
         type: Sequelize.TEXT,
       },
     });
     await queryInterface.addIndex('properties', ['url'], { unique: true });
-    await queryInterface.addIndex('properties', ['residence_id']);
+    await queryInterface.addIndex('properties', ['residence_uuid']);
   },
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('properties');

@@ -7,7 +7,11 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER,
+        type: Sequelize.BIGINT,
+      },
+      uuid: {
+        allowNull: false,
+        type: Sequelize.STRING,
       },
       name: {
         allowNull: false,
@@ -24,11 +28,22 @@ module.exports = {
       route_caption: {
         type: Sequelize.STRING,
       },
-      constructed_at: {
+      constructed_date: {
         type: Sequelize.DATE,
+      },
+      lat: {
+        type: Sequelize.FLOAT,
+      },
+      lon: {
+        type: Sequelize.FLOAT,
+      },
+      geohash: {
+        type: Sequelize.STRING,
       },
     });
     await queryInterface.addIndex('residences', ['address'], { unique: true });
+    await queryInterface.addIndex('residences', ['uuid'], { unique: true });
+    await queryInterface.addIndex('residences', ['geohash']);
   },
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('residences');
