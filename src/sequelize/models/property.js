@@ -9,6 +9,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       this.belongsTo(models.Residence, { targetKey: 'uuid', foreignKey: 'residence_uuid', as: 'residence' });
+      this.hasMany(models.PropertyResource, { sourceKey: 'url', foreignKey: 'from_url', as: 'resources' });
     }
   }
   Property.init(
