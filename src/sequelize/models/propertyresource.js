@@ -1,7 +1,5 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class PropertyResource extends Model {
     /**
@@ -13,15 +11,18 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
-  PropertyResource.init({
-    from_url: DataTypes.STRING,
-    url: DataTypes.STRING,
-    backup_state: DataTypes.INTEGER,
-  }, {
-    sequelize,
-    modelName: 'PropertyResource',
-    tableName: 'property_resources',
-    timestamps: false,
-  });
+  PropertyResource.init(
+    {
+      from_url: DataTypes.STRING,
+      url: DataTypes.STRING,
+      backup_state: DataTypes.INTEGER,
+    },
+    {
+      sequelize,
+      modelName: 'PropertyResource',
+      tableName: 'property_resources',
+      timestamps: false,
+    },
+  );
   return PropertyResource;
 };
