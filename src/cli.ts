@@ -27,19 +27,28 @@ crawlCommand
   .command('suumo:rooturl')
   .description('')
   .action(async (options: any) => {
-    const searchUrl = new URL('https://suumo.jp/chintai/tokyo/');
-    const response = await axios.get(searchUrl.toString());
-    const root = nodeHtmlParser.parse(response.data.toString());
-    const itemDoms = root.querySelectorAll('ul.itemtoplist');
-    for (const itemDom of itemDoms) {
-      const itemAtagDoms = itemDom.querySelectorAll('a');
-      for(const itemAtagDom of itemAtagDoms) {
-        const aTagAttrs = itemAtagDom.attrs || {};
-        console.log(aTagAttrs);
-        console.log(itemAtagDom.text)
-      }
-    }
+    const crawlRootUrlInfos = await loadSuumoCrawlRootUrlInfos('https://suumo.jp/chintai/tokyo/');
+    console.log(crawlRootUrlInfos);
   });
+
+async function loadSuumoCrawlRootUrlInfos(rootUrl: string): Promise<{ url: string; title: string }[]> {
+  const searchUrl = new URL(rootUrl);
+  const crawlRootUrlInfos: { url: string; title: string }[] = [];
+  const response = await axios.get(searchUrl.toString());
+  const root = nodeHtmlParser.parse(response.data.toString());
+  const itemDoms = root.querySelectorAll('ul.itemtoplist');
+  for (const itemDom of itemDoms) {
+    const itemAtagDoms = itemDom.querySelectorAll('a');
+    for (const itemAtagDom of itemAtagDoms) {
+      const aTagAttrs = itemAtagDom.attrs || {};
+      crawlRootUrlInfos.push({
+        url: aTagAttrs.href,
+        title: itemAtagDom.text,
+      });
+    }
+  }
+  return crawlRootUrlInfos;
+}
 
 program.addCommand(crawlCommand);
 
