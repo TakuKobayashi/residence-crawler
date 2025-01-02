@@ -27,27 +27,19 @@ crawlCommand
   .command('suumo:rooturl')
   .description('')
   .action(async (options: any) => {
-    const searchUrl = new URL('https://suumo.jp/chintai/');
-    const response = await axios.get(searchUrl.toString());
-    const root = nodeHtmlParser.parse(response.data.toString());
-    const itemDoms = root.querySelectorAll('.stripe_lists-line');
-    for (const itemDom of itemDoms) {
-      const itemAtagDoms = itemDom.querySelectorAll('a');
-      for (const itemAtagDom of itemAtagDoms) {
-        const aTagAttrs = itemAtagDom.attrs || {};
-        searchUrl.pathname = aTagAttrs.href;
-        const crawlRootUrlInfos = await loadSuumoCrawlRootUrlInfos(searchUrl.toString());
-        console.log(crawlRootUrlInfos);
-      }
+    const todoufukenAreaUrlInfos = await loadSuumoCrawlRootUrlInfos('https://suumo.jp/chintai/', '.stripe_lists-line');
+    for (const todoufukenAreaUrlInfo of todoufukenAreaUrlInfos) {
+      const crawlRootUrlInfos = await loadSuumoCrawlRootUrlInfos(todoufukenAreaUrlInfo.url, 'ul.itemtoplist');
+      console.log(crawlRootUrlInfos);
     }
   });
 
-async function loadSuumoCrawlRootUrlInfos(rootUrl: string): Promise<{ url: string; title: string }[]> {
+async function loadSuumoCrawlRootUrlInfos(rootUrl: string, querySelector: string): Promise<{ url: string; title: string }[]> {
   const crawlRootUrlInfos: { url: string; title: string }[] = [];
   const searchUrl = new URL(rootUrl);
   const response = await axios.get(searchUrl.toString());
   const root = nodeHtmlParser.parse(response.data.toString());
-  const itemDoms = root.querySelectorAll('ul.itemtoplist');
+  const itemDoms = root.querySelectorAll(querySelector);
   for (const itemDom of itemDoms) {
     const itemAtagDoms = itemDom.querySelectorAll('a');
     for (const itemAtagDom of itemAtagDoms) {
