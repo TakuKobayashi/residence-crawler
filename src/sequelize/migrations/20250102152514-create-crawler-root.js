@@ -24,6 +24,11 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
+      priority: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        defaultValue: 0,
+      },
       last_url: {
         type: Sequelize.STRING,
       },

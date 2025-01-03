@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
       import_from: DataTypes.INTEGER,
       title: DataTypes.STRING,
       url: DataTypes.STRING,
+      priority: DataTypes.INTEGER,
       last_url: DataTypes.STRING,
       last_page_number: DataTypes.INTEGER,
       last_request_params: DataTypes.STRING,
