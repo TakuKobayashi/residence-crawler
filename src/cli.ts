@@ -66,8 +66,8 @@ crawlCommand
       // 下半分
       const cassetteItemOtherDom = propertyItemDom.querySelector('.cassetteitem_other');
       if (cassetteItemOtherDom) {
-        const jsCassetteLinkDom = cassetteItemOtherDom.querySelector('tr.js-cassette_link');
-        if (jsCassetteLinkDom) {
+        const jsCassetteLinksDom = cassetteItemOtherDom.querySelectorAll('tr.js-cassette_link');
+        for (const jsCassetteLinkDom of jsCassetteLinksDom) {
           const cassetteitemOtherInfosDom = jsCassetteLinkDom.querySelectorAll('td') || [];
           // 画像データ
           const propertyImagesDom = jsCassetteLinkDom.querySelector('.casssetteitem_other-thumbnail');
