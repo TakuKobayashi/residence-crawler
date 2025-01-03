@@ -2,6 +2,7 @@ import { program, Command } from 'commander';
 import packageJson from '../package.json';
 import nodeHtmlParser from 'node-html-parser';
 import axios from 'axios';
+import { exportToInsertSQL } from './libs/utils/data-exporters';
 import { sleep } from './libs/utils/util';
 import models from './sequelize/models';
 import { ImportFroms } from './sequelize/enums/import-froms';
@@ -77,7 +78,7 @@ exportCommand
   .command('sql')
   .description('')
   .action(async (options: any) => {
-    //    await exportToInsertSQL();
+    await exportToInsertSQL();
   });
 
 program.addCommand(exportCommand);

@@ -21,7 +21,7 @@ const excludeExportTableNames = ['SequelizeMeta'];
 
 export function loadSavedSqlRootDirPath(): string {
   const appDir = path.dirname(require.main?.filename || '');
-  const saveSqlDirPath = path.join(appDir, `..`, 'sqls', `tables`);
+  const saveSqlDirPath = path.join(appDir, `..`, 'data', 'sqls', `tables`);
   // cli.ts がある場所なのでSQLを保管する場所を指定する
   if (!fs.existsSync(saveSqlDirPath)) {
     fs.mkdirSync(saveSqlDirPath, { recursive: true });

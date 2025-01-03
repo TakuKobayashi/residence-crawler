@@ -17,7 +17,7 @@ services:
       - appandserver
 
   nodejs:
-    container_name: resource_crawler_nodejs
+    container_name: residence-crawler-nodejs
     environment:
       MYSQL_HOST: mysql
       MYSQL_USER: ${MYSQL_USERNAME}
