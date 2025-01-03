@@ -2,6 +2,8 @@ import { program, Command } from 'commander';
 import packageJson from '../package.json';
 import nodeHtmlParser from 'node-html-parser';
 import axios from 'axios';
+import { normalize } from '@geolonia/normalize-japanese-addresses';
+import { encodeBase32 } from 'geohashing';
 import { exportToInsertSQL } from './libs/utils/data-exporters';
 import { importFromSqls } from './libs/utils/data-importers';
 import { sleep } from './libs/utils/util';
@@ -35,22 +37,29 @@ crawlCommand
       if (cassetteItemDetailDom) {
         // 賃貸マンションなどのカテゴリー
         const categoryDom = cassetteItemDetailDom.querySelector('.cassetteitem_content-label');
-        console.log(categoryDom?.text)
+        console.log(categoryDom?.text);
         // 物件名
         const propertyNameDom = cassetteItemDetailDom.querySelector('.cassetteitem_content-title');
-        console.log(propertyNameDom?.text)
+        console.log(propertyNameDom?.text);
         // 住所
         const addressDom = cassetteItemDetailDom.querySelector('.cassetteitem_detail-col1');
-        console.log(addressDom?.text)
+        console.log(addressDom?.text);
+        const normalizedObj = await normalize(addressDom?.text || '');
+        const latlonPoints = normalizedObj.point;
+        console.log(latlonPoints);
+        if (latlonPoints) {
+          const geoHash = encodeBase32(latlonPoints.lat, latlonPoints.lng);
+          console.log(geoHash);
+        }
         // 近くの駅から徒歩何分などの経路情報
         const routeCaptionDom = cassetteItemDetailDom.querySelector('.cassetteitem_detail-col2');
         const routeCaptionLinesDom = routeCaptionDom?.querySelectorAll('.cassetteitem_detail-text') || [];
         const routeCaptionText = routeCaptionLinesDom.map((routeCaptionLineDom) => routeCaptionLineDom.text).join('\n');
-        console.log(routeCaptionText)
+        console.log(routeCaptionText);
         // 築年数と何階建て
         const residenceInfoDom = cassetteItemDetailDom.querySelector('.cassetteitem_detail-col3');
         const maxFloorConstructedDateDom = residenceInfoDom?.querySelectorAll('div') || [];
-        const maxFloorText = maxFloorConstructedDateDom[1]?.text || ''
+        const maxFloorText = maxFloorConstructedDateDom[1]?.text || '';
         console.log(maxFloorText);
       }
       // 下半分
@@ -64,35 +73,34 @@ crawlCommand
           const propertyImagesAttrs = propertyImagesDom?.attrs || {};
           const imageUrlCsv = propertyImagesAttrs['data-imgs'] || '';
           const imageUrls = imageUrlCsv.split(',');
-          console.log(imageUrls)
+          console.log(imageUrls);
           // 物件の階数
           const floorNumberText = cassetteitemOtherInfosDom[2]?.text || '';
-          console.log(floorNumberText.trim())
+          console.log(floorNumberText.trim());
           // 賃料
           const rentPriceDom = jsCassetteLinkDom.querySelector('.cassetteitem_price--rent');
-          console.log(rentPriceDom?.text)
+          console.log(rentPriceDom?.text);
           // 管理費
           const administrationDom = jsCassetteLinkDom.querySelector('.cassetteitem_price--administration');
-          console.log(administrationDom?.text)
+          console.log(administrationDom?.text);
           // 敷金
           const depositeDom = jsCassetteLinkDom.querySelector('.cassetteitem_price--deposit');
-          console.log(depositeDom?.text)
+          console.log(depositeDom?.text);
           // 礼金
           const gratuityDom = jsCassetteLinkDom.querySelector('.cassetteitem_price--gratuity');
-          console.log(gratuityDom?.text)
+          console.log(gratuityDom?.text);
           // 間取り
           const madoriDom = jsCassetteLinkDom.querySelector('.cassetteitem_madori');
-          console.log(madoriDom?.text)
+          console.log(madoriDom?.text);
           // 面積
           const mensekiDom = jsCassetteLinkDom.querySelector('.cassetteitem_menseki');
-          console.log(mensekiDom?.text)
+          console.log(mensekiDom?.text);
           // URL
           const detailLinkDom = jsCassetteLinkDom.querySelector('.js-cassette_link_href');
           const detailLinkAttrs = detailLinkDom?.attrs || {};
           searchUrl.pathname = detailLinkAttrs.href;
           console.log(searchUrl.toString());
         }
-
       }
     }
   });
