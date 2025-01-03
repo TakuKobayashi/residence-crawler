@@ -22,7 +22,7 @@ const crawlCommand = new Command('crawl');
 crawlCommand.description('crawl services');
 
 crawlCommand
-  .command('suumo')
+  .command('suumo:property')
   .description('')
   .action(async (options: any) => {
     console.log('suumo crawler');
