@@ -28,7 +28,8 @@ crawlCommand
   .description('')
   .action(async (options: any) => {
     const searchUrl = new URL('https://suumo.jp/chintai/tokyo/sc_chiyoda/');
-    const response = await axios.get(searchUrl.toString());
+    // po1: 09 は新着順 pc: 50 は1ページ50件表示 という意味
+    const response = await axios.get(searchUrl.toString(), { params: { po1: '09', pc: 50, page: 1 } });
     const root = nodeHtmlParser.parse(response.data.toString());
     const propertyItemDoms = root.querySelectorAll('.cassetteitem');
     for (const propertyItemDom of propertyItemDoms) {
