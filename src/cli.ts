@@ -25,7 +25,76 @@ crawlCommand
   .command('suumo:property')
   .description('')
   .action(async (options: any) => {
-    console.log('suumo crawler');
+    const searchUrl = new URL('https://suumo.jp/chintai/tokyo/sc_chiyoda/');
+    const response = await axios.get(searchUrl.toString());
+    const root = nodeHtmlParser.parse(response.data.toString());
+    const propertyItemDoms = root.querySelectorAll('.cassetteitem');
+    for (const propertyItemDom of propertyItemDoms) {
+      // 上半分の項目
+      const cassetteItemDetailDom = propertyItemDom.querySelector('.cassetteitem-detail');
+      if (cassetteItemDetailDom) {
+        // 賃貸マンションなどのカテゴリー
+        const categoryDom = cassetteItemDetailDom.querySelector('.cassetteitem_content-label');
+        console.log(categoryDom?.text)
+        // 物件名
+        const propertyNameDom = cassetteItemDetailDom.querySelector('.cassetteitem_content-title');
+        console.log(propertyNameDom?.text)
+        // 住所
+        const addressDom = cassetteItemDetailDom.querySelector('.cassetteitem_detail-col1');
+        console.log(addressDom?.text)
+        // 近くの駅から徒歩何分などの経路情報
+        const routeCaptionDom = cassetteItemDetailDom.querySelector('.cassetteitem_detail-col2');
+        const routeCaptionLinesDom = routeCaptionDom?.querySelectorAll('.cassetteitem_detail-text') || [];
+        const routeCaptionText = routeCaptionLinesDom.map((routeCaptionLineDom) => routeCaptionLineDom.text).join('\n');
+        console.log(routeCaptionText)
+        // 築年数と何階建て
+        const residenceInfoDom = cassetteItemDetailDom.querySelector('.cassetteitem_detail-col3');
+        const maxFloorConstructedDateDom = residenceInfoDom?.querySelectorAll('div') || [];
+        const maxFloorText = maxFloorConstructedDateDom[1]?.text || ''
+        console.log(maxFloorText);
+      }
+      // 下半分
+      const cassetteItemOtherDom = propertyItemDom.querySelector('.cassetteitem_other');
+      if (cassetteItemOtherDom) {
+        const jsCassetteLinkDom = cassetteItemOtherDom.querySelector('tr.js-cassette_link');
+        if (jsCassetteLinkDom) {
+          const cassetteitemOtherInfosDom = jsCassetteLinkDom.querySelectorAll('td') || [];
+          // 画像データ
+          const propertyImagesDom = jsCassetteLinkDom.querySelector('.casssetteitem_other-thumbnail');
+          const propertyImagesAttrs = propertyImagesDom?.attrs || {};
+          const imageUrlCsv = propertyImagesAttrs['data-imgs'] || '';
+          const imageUrls = imageUrlCsv.split(',');
+          console.log(imageUrls)
+          // 物件の階数
+          const floorNumberText = cassetteitemOtherInfosDom[2]?.text || '';
+          console.log(floorNumberText.trim())
+          // 賃料
+          const rentPriceDom = jsCassetteLinkDom.querySelector('.cassetteitem_price--rent');
+          console.log(rentPriceDom?.text)
+          // 管理費
+          const administrationDom = jsCassetteLinkDom.querySelector('.cassetteitem_price--administration');
+          console.log(administrationDom?.text)
+          // 敷金
+          const depositeDom = jsCassetteLinkDom.querySelector('.cassetteitem_price--deposit');
+          console.log(depositeDom?.text)
+          // 礼金
+          const gratuityDom = jsCassetteLinkDom.querySelector('.cassetteitem_price--gratuity');
+          console.log(gratuityDom?.text)
+          // 間取り
+          const madoriDom = jsCassetteLinkDom.querySelector('.cassetteitem_madori');
+          console.log(madoriDom?.text)
+          // 面積
+          const mensekiDom = jsCassetteLinkDom.querySelector('.cassetteitem_menseki');
+          console.log(mensekiDom?.text)
+          // URL
+          const detailLinkDom = jsCassetteLinkDom.querySelector('.js-cassette_link_href');
+          const detailLinkAttrs = detailLinkDom?.attrs || {};
+          searchUrl.pathname = detailLinkAttrs.href;
+          console.log(searchUrl.toString());
+        }
+
+      }
+    }
   });
 
 crawlCommand
