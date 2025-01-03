@@ -3,6 +3,7 @@ import packageJson from '../package.json';
 import nodeHtmlParser from 'node-html-parser';
 import axios from 'axios';
 import { exportToInsertSQL } from './libs/utils/data-exporters';
+import { importFromSqls } from './libs/utils/data-importers';
 import { sleep } from './libs/utils/util';
 import models from './sequelize/models';
 import { ImportFroms } from './sequelize/enums/import-froms';
@@ -82,5 +83,16 @@ exportCommand
   });
 
 program.addCommand(exportCommand);
+
+const importCommand = new Command('import');
+
+importCommand
+  .command('sql')
+  .description('')
+  .action(async (options: any) => {
+    await importFromSqls();
+  });
+
+program.addCommand(importCommand);
 
 program.parse(process.argv);
