@@ -99,7 +99,9 @@ crawlCommand
           // URL
           const detailLinkDom = jsCassetteLinkDom.querySelector('.js-cassette_link_href');
           const detailLinkAttrs = detailLinkDom?.attrs || {};
-          searchUrl.pathname = detailLinkAttrs.href;
+          const [detailLinkPath, detailLinkQuery] = detailLinkAttrs.href.toString().split('?');
+          searchUrl.pathname = detailLinkPath;
+          searchUrl.search = detailLinkQuery;
           console.log(searchUrl.toString());
         }
       }
