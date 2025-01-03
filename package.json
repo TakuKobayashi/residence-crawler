@@ -19,7 +19,8 @@
     "lodash": "^4.17.21",
     "mysql2": "^3.9.7",
     "node-html-parser": "^7.0.1",
-    "sequelize": "^6.37.3"
+    "sequelize": "^6.37.3",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",

@@ -2,6 +2,7 @@ import { program, Command } from 'commander';
 import packageJson from '../package.json';
 import nodeHtmlParser from 'node-html-parser';
 import axios from 'axios';
+import { sleep } from './libs/utils/util';
 
 import { config } from 'dotenv';
 config();
@@ -29,6 +30,7 @@ crawlCommand
   .action(async (options: any) => {
     const todoufukenAreaUrlInfos = await loadSuumoCrawlRootUrlInfos('https://suumo.jp/chintai/', '.stripe_lists-line');
     for (const todoufukenAreaUrlInfo of todoufukenAreaUrlInfos) {
+      await sleep(1000);
       const crawlRootUrlInfos = await loadSuumoCrawlRootUrlInfos(todoufukenAreaUrlInfo.url, 'ul.itemtoplist');
       console.log(crawlRootUrlInfos);
     }
