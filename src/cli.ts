@@ -3,6 +3,8 @@ import packageJson from '../package.json';
 import nodeHtmlParser from 'node-html-parser';
 import axios from 'axios';
 import { sleep } from './libs/utils/util';
+import models from './sequelize/models';
+import { ImportFroms } from './sequelize/enums/import-froms';
 
 import { config } from 'dotenv';
 config();
@@ -32,7 +34,18 @@ crawlCommand
     for (const todoufukenAreaUrlInfo of todoufukenAreaUrlInfos) {
       await sleep(1000);
       const crawlRootUrlInfos = await loadSuumoCrawlRootUrlInfos(todoufukenAreaUrlInfo.url, 'ul.itemtoplist');
-      console.log(crawlRootUrlInfos);
+      if (crawlRootUrlInfos.length <= 0) {
+        continue;
+      }
+      const crawlerRootsData = crawlRootUrlInfos.map((crawlRootUrlInfo) => {
+        return {
+          import_from: ImportFroms.suumo,
+          title: `${todoufukenAreaUrlInfo.title}${crawlRootUrlInfo.title}`,
+          url: crawlRootUrlInfo.url,
+        };
+      });
+      await models.CrawlerRoot.bulkCreate(crawlerRootsData, { updateOnDuplicate: ['url'] });
+      await models.sequelize.query(`ALTER TABLE \`${models.CrawlerRoot.tableName}\` auto_increment = 1;`);
     }
   });
 
