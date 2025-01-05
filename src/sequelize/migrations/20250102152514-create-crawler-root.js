@@ -29,7 +29,10 @@ module.exports = {
         type: Sequelize.INTEGER,
         defaultValue: 0,
       },
-      last_url: {
+      sequence_start_url: {
+        type: Sequelize.STRING,
+      },
+      sequence_last_url: {
         type: Sequelize.STRING,
       },
       last_page_number: {
@@ -40,7 +43,7 @@ module.exports = {
       last_request_params: {
         type: Sequelize.TEXT,
       },
-      last_executed_at: {
+      reached_end_at: {
         type: Sequelize.DATE,
       },
     });

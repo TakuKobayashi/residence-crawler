@@ -17,10 +17,11 @@ module.exports = (sequelize, DataTypes) => {
       title: DataTypes.STRING,
       url: DataTypes.STRING,
       priority: DataTypes.INTEGER,
-      last_url: DataTypes.STRING,
+      sequence_start_url: DataTypes.STRING,
+      sequence_last_url: DataTypes.STRING,
       last_page_number: DataTypes.INTEGER,
       last_request_params: DataTypes.STRING,
-      last_executed_at: DataTypes.DATE,
+      end_executed_at: DataTypes.DATE,
     },
     {
       sequelize,

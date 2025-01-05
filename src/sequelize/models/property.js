@@ -8,13 +8,15 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      this.belongsTo(models.Residence, { targetKey: 'uuid', foreignKey: 'residence_uuid', as: 'residence' });
+      this.belongsTo(models.Residence, { targetKey: 'id', foreignKey: 'residence_id', as: 'residence' });
       this.hasMany(models.PropertyResource, { sourceKey: 'url', foreignKey: 'from_url', as: 'resources' });
     }
   }
   Property.init(
     {
-      residence_uuid: DataTypes.STRING,
+      residence_id: DataTypes.BIGINT,
+      name: DataTypes.STRING,
+      address: DataTypes.STRING,
       import_from: DataTypes.INTEGER,
       category: DataTypes.STRING,
       url: DataTypes.STRING,

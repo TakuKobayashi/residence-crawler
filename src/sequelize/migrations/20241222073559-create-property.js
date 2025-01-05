@@ -12,7 +12,14 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.BIGINT,
       },
-      residence_uuid: {
+      residence_id: {
+        type: Sequelize.BIGINT,
+      },
+      name: {
+        allowNull: false,
+        type: Sequelize.STRING,
+      },
+      address: {
         allowNull: false,
         type: Sequelize.STRING,
       },
@@ -74,7 +81,8 @@ module.exports = {
       },
     });
     await queryInterface.addIndex('properties', ['url'], { unique: true });
-    await queryInterface.addIndex('properties', ['residence_uuid']);
+    await queryInterface.addIndex('properties', ['residence_id']);
+    await queryInterface.addIndex('properties', ['address']);
   },
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('properties');

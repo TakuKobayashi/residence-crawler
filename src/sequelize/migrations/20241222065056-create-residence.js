@@ -9,10 +9,6 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.BIGINT,
       },
-      uuid: {
-        allowNull: false,
-        type: Sequelize.STRING,
-      },
       name: {
         allowNull: false,
         type: Sequelize.STRING,
@@ -42,7 +38,6 @@ module.exports = {
       },
     });
     await queryInterface.addIndex('residences', ['address'], { unique: true });
-    await queryInterface.addIndex('residences', ['uuid'], { unique: true });
     await queryInterface.addIndex('residences', ['geohash']);
   },
   async down(queryInterface, Sequelize) {
