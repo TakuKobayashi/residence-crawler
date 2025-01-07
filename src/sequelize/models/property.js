@@ -26,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
       deposit: DataTypes.FLOAT,
       gratuity_fee: DataTypes.FLOAT,
       floor_plan: DataTypes.STRING,
-      area: DataTypes.INTEGER,
+      area: DataTypes.FLOAT,
       infomation_updated_date: DataTypes.DATE,
       publish_state: DataTypes.INTEGER,
       extra_info: DataTypes.STRING,

@@ -66,7 +66,7 @@ module.exports = {
       },
       area: {
         allowNull: false,
-        type: Sequelize.INTEGER,
+        type: Sequelize.FLOAT,
         defaultValue: 0,
       },
       infomation_updated_date: {
