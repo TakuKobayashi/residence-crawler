@@ -101,10 +101,10 @@ crawlCommand
               lon?: number;
               geohash?: string;
             } = {
-              name: propertyNameDom?.text || '',
-              address: addressDom?.text || '',
-              route_caption: routeCaptionText,
-              max_floor: maxFloorText,
+              name: (propertyNameDom?.text || '').normalize('NFKC'),
+              address: (addressDom?.text || '').normalize('NFKC'),
+              route_caption: routeCaptionText.normalize('NFKC'),
+              max_floor: maxFloorText.normalize('NFKC'),
             };
             const normalizedObj = await normalize(residenceData.address);
             const latlonPoints = normalizedObj.point;
@@ -145,7 +145,7 @@ crawlCommand
                 }
                 // 築年数と物件の階数
                 const cassetteitemOtherInfosDom = jsCassetteLinkDom.querySelectorAll('td') || [];
-                const floorNumberText = (cassetteitemOtherInfosDom[2]?.text || '').trim();
+                const floorNumberText = (cassetteitemOtherInfosDom[2]?.text || '').trim().normalize('NFKC');
                 const floorNumber = Number((floorNumberText.match(/\d+/g) || [])[0] || '1');
                 const floorPlusMinus = floorNumberText.startsWith('地下') ? -1 : 1;
                 // 賃料
@@ -176,14 +176,14 @@ crawlCommand
                   name: residenceData.name,
                   address: residenceData.address,
                   import_from: ImportFroms.suumo,
-                  category: categoryDom?.text || '',
+                  category: (categoryDom?.text || '').normalize('NFKC'),
                   url: searchUrl.toString(),
                   floor_number: floorNumber * floorPlusMinus,
                   rent_price: rentPriceNumber * rentPriceMulti,
                   management_fee: administrationPriceNumber,
                   deposit: depositeNumber * depositeMulti,
                   gratuity_fee: gratuityNumber * gratuityMulti,
-                  floor_plan: madoriDom?.text || '',
+                  floor_plan: (madoriDom?.text || '').normalize('NFKC'),
                   area: mensekiNumber,
                 });
               }
