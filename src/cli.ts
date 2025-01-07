@@ -31,12 +31,13 @@ crawlCommand
     const crawlerRoots = await models.CrawlerRoot.findAll({
       where: {
         import_from: ImportFroms.suumo,
+        reached_end_at: null,
       },
       order: [['priority', 'DESC']],
     });
     for (const crawlerRoot of crawlerRoots) {
       let currentPage = crawlerRoot.last_page_number;
-      while (true) {
+      while (!crawlerRoot.reached_end_at) {
         const searchUrl = new URL(crawlerRoot.url);
         const residencesData: {
           name: string;
@@ -125,7 +126,12 @@ crawlCommand
                 const [detailLinkPath, detailLinkQuery] = detailLinkAttrs.href.toString().split('?');
                 searchUrl.pathname = detailLinkPath;
                 searchUrl.search = detailLinkQuery;
-                const cassetteitemOtherInfosDom = jsCassetteLinkDom.querySelectorAll('td') || [];
+                if (searchUrl.toString() === crawlerRoot.sequence_start_url) {
+                  crawlerRoot.last_page_number = 1;
+                  crawlerRoot.reached_end_at = new Date();
+                  await crawlerRoot.save();
+                  break;
+                }
                 // 画像データ
                 const propertyImagesDom = jsCassetteLinkDom.querySelector('.casssetteitem_other-thumbnail');
                 const propertyImagesAttrs = propertyImagesDom?.attrs || {};
@@ -137,7 +143,8 @@ crawlCommand
                     url: imageUrl,
                   });
                 }
-                // 物件の階数
+                // 築年数と物件の階数
+                const cassetteitemOtherInfosDom = jsCassetteLinkDom.querySelectorAll('td') || [];
                 const floorNumberText = (cassetteitemOtherInfosDom[2]?.text || '').trim();
                 const floorNumber = Number((floorNumberText.match(/\d+/g) || [])[0] || '1');
                 const floorPlusMinus = floorNumberText.startsWith('地下') ? -1 : 1;
