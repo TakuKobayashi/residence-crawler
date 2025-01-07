@@ -25,7 +25,7 @@ module.exports = {
         defaultValue: BackupStates.stay,
       },
     });
-    await queryInterface.addIndex('property_resources', ['from_url', 'url']);
+    await queryInterface.addIndex('property_resources', ['from_url', 'url'], { unique: true });
   },
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('property_resources');

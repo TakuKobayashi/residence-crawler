@@ -13,6 +13,7 @@ module.exports = {
         type: Sequelize.BIGINT,
       },
       residence_id: {
+        allowNull: false,
         type: Sequelize.BIGINT,
       },
       name: {
