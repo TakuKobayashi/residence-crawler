@@ -21,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
       sequence_last_url: DataTypes.STRING,
       last_page_number: DataTypes.INTEGER,
       last_request_params: DataTypes.STRING,
-      end_executed_at: DataTypes.DATE,
+      reached_end_at: DataTypes.DATE,
     },
     {
       sequelize,
