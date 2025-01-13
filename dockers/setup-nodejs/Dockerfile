@@ -1,4 +1,4 @@
-FROM node:18.20.2-slim
+FROM node:22.13.0-slim
 COPY ./ /app
 WORKDIR /app
 
