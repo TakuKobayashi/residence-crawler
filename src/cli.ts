@@ -3,6 +3,7 @@ import packageJson from '../package.json';
 import nodeHtmlParser from 'node-html-parser';
 import axios from 'axios';
 import _ from 'lodash';
+import dayjs from 'dayjs';
 import { normalize } from '@geolonia/normalize-japanese-addresses';
 import { encodeBase32 } from 'geohashing';
 import { exportToInsertSQL } from './libs/utils/data-exporters';
@@ -36,7 +37,10 @@ crawlCommand
     });
     for (const crawlerRoot of crawlerRoots) {
       let currentPage = crawlerRoot.last_page_number;
-      while (!crawlerRoot.reached_end_at) {
+      if (crawlerRoot.reached_end_at) {
+        currentPage = 1;
+      }
+      while (!crawlerRoot.reached_end_at || crawlerRoot.reached_end_at < dayjs().add(-3, 'day')) {
         const searchUrl = new URL(crawlerRoot.url);
         const residencesData: {
           name: string;
