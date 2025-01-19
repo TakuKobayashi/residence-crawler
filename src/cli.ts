@@ -31,7 +31,6 @@ crawlCommand
     const crawlerRoots = await models.CrawlerRoot.findAll({
       where: {
         import_from: ImportFroms.suumo,
-        reached_end_at: null,
       },
       order: [['priority', 'DESC']],
     });
