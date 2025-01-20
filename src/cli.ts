@@ -223,7 +223,12 @@ crawlCommand
           }
         }
         crawlerRoot.last_page_number = currentPage;
-        crawlerRoot.sequence_last_url = propertiesData[propertiesData.length - 1]?.url;
+        const propertyData = propertiesData[propertiesData.length - 1];
+        if (propertyData) {
+          crawlerRoot.sequence_last_url = propertyData.url;
+        } else {
+          crawlerRoot.sequence_last_url = null;
+        }
         await crawlerRoot.save();
         currentPage = currentPage + 1;
         await sleep(1000);
