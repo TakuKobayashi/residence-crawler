@@ -193,30 +193,32 @@ crawlCommand
             }
           }
         }
-        await Promise.all([
-          models.Residence.bulkCreate(residencesData, { updateOnDuplicate: ['address'] }),
-          models.PropertyResource.bulkCreate(propertyResourcesData, { updateOnDuplicate: ['from_url', 'url'] }),
-        ]);
-        await Promise.all([
-          models.sequelize.query(`ALTER TABLE \`${models.Residence.tableName}\` auto_increment = 1;`),
-          models.sequelize.query(`ALTER TABLE \`${models.PropertyResource.tableName}\` auto_increment = 1;`),
-        ]);
+        if (residencesData.length > 0 && propertyResourcesData.length > 0 && propertiesData.length > 0) {
+          await Promise.all([
+            models.Residence.bulkCreate(residencesData, { updateOnDuplicate: ['address'] }),
+            models.PropertyResource.bulkCreate(propertyResourcesData, { updateOnDuplicate: ['from_url', 'url'] }),
+          ]);
+          await Promise.all([
+            models.sequelize.query(`ALTER TABLE \`${models.Residence.tableName}\` auto_increment = 1;`),
+            models.sequelize.query(`ALTER TABLE \`${models.PropertyResource.tableName}\` auto_increment = 1;`),
+          ]);
 
-        const insertedResidences = await models.Residence.findAll({
-          where: {
-            address: residencesData.map((data) => data.address),
-          },
-          attributes: ['id', 'address'],
-        });
-        const addressResidence = _.keyBy(insertedResidences, 'address');
+          const insertedResidences = await models.Residence.findAll({
+            where: {
+              address: residencesData.map((data) => data.address),
+            },
+            attributes: ['id', 'address'],
+          });
+          const addressResidence = _.keyBy(insertedResidences, 'address');
 
-        await models.Property.bulkCreate(
-          propertiesData.map((propertyData) => {
-            return { ...propertyData, residence_id: addressResidence[propertyData.address].id };
-          }),
-          { updateOnDuplicate: ['url'] },
-        );
-        await models.sequelize.query(`ALTER TABLE \`${models.Property.tableName}\` auto_increment = 1;`);
+          await models.Property.bulkCreate(
+            propertiesData.map((propertyData) => {
+              return { ...propertyData, residence_id: addressResidence[propertyData.address].id };
+            }),
+            { updateOnDuplicate: ['url'] },
+          );
+          await models.sequelize.query(`ALTER TABLE \`${models.Property.tableName}\` auto_increment = 1;`);
+        }
         if (currentPage <= 1) {
           crawlerRoot.sequence_start_url = propertiesData[0]?.url;
         }
