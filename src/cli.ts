@@ -218,9 +218,9 @@ crawlCommand
             { updateOnDuplicate: ['url'] },
           );
           await models.sequelize.query(`ALTER TABLE \`${models.Property.tableName}\` auto_increment = 1;`);
-        }
-        if (currentPage <= 1) {
-          crawlerRoot.sequence_start_url = propertiesData[0]?.url;
+          if (currentPage <= 1) {
+            crawlerRoot.sequence_start_url = propertiesData[0]?.url;
+          }
         }
         crawlerRoot.last_page_number = currentPage;
         crawlerRoot.sequence_last_url = propertiesData[propertiesData.length - 1]?.url;
