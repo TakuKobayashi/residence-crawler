@@ -20,7 +20,7 @@ export async function importFromSqls() {
         if (insertSql.length > 0) {
           executeSqlPromises.push(models.sequelize.query(insertSql));
           // 非同期でINSERTを実行しすぎると処理しきれなくなるので途中でいったん止めて同期する
-          if (executeSqlPromises.length % 100 === 0) {
+          if (executeSqlPromises.length % 50 === 0) {
             reader.pause();
             await Promise.all(executeSqlPromises);
             executeSqlPromises.splice(0);

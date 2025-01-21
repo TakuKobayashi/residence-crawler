@@ -12,6 +12,9 @@ const config = {
     collate: process.env.MYSQL_COLLATE,
     encoding: process.env.MYSQL_ENCODING,
   },
+  pool: {
+    acquire: 120000,
+  }
 };
 
 module.exports = config;
