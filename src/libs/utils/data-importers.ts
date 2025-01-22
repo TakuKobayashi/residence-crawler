@@ -18,6 +18,7 @@ export async function importFromSqls() {
   const appDir = path.dirname(require.main?.filename || '');
   const sqlFilePathes = fg.sync([...appDir.split(path.sep), `..`, 'data', 'sqls', `tables`, '**', '*.sql'].join('/'), { dot: true });
   for (const sqlFilePath of sqlFilePathes) {
+    console.log(sqlFilePath);
     await new Promise<void>((resolve, reject) => {
       // 量が多いのでSQLは表示しない
       const executeSqlPromises: Promise<[QueryResult, FieldPacket[]]>[] = [];
