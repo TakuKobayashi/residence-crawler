@@ -16,6 +16,22 @@ services:
     networks:
       - appandserver
 
+  pgsql:
+    image: postgres:17.2
+    container_name: pgsql
+    hostname: ${HOSTNAME}
+    ports:
+      - "${PGSQL_PORT}:5432"
+    environment:
+      - POSTGRES_USER=${PGSQL_USERNAME}
+      - POSTGRES_PASSWORD=${PGSQL_ROOT_PASSWORD}
+      - POSTGRES_DB=${PGSQL_DATABASE}
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    volumes:
+      - pgsql-data:/var/lib/postgresql/data
+    networks:
+      - appandserver
+
   nodejs:
     container_name: residence-crawler-nodejs
     environment:
@@ -48,3 +64,4 @@ networks:
 
 volumes:
   mysql-data:
+  pgsql-data:

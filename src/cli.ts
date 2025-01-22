@@ -204,8 +204,8 @@ crawlCommand
             models.PropertyResource.bulkCreate(propertyResourcesData, { updateOnDuplicate: ['from_url', 'url'] }),
           ]);
           await Promise.all([
-            models.sequelize.query(`ALTER TABLE \`${models.Residence.tableName}\` auto_increment = 1;`),
-            models.sequelize.query(`ALTER TABLE \`${models.PropertyResource.tableName}\` auto_increment = 1;`),
+            resetAutoIncrementSequence(models.Residence.tableName),
+            resetAutoIncrementSequence(models.PropertyResource.tableName),
           ]);
 
           const insertedResidences = await models.Residence.findAll({
@@ -222,7 +222,7 @@ crawlCommand
             }),
             { updateOnDuplicate: ['url'] },
           );
-          await models.sequelize.query(`ALTER TABLE \`${models.Property.tableName}\` auto_increment = 1;`);
+          await resetAutoIncrementSequence(models.Property.tableName);
           if (currentPage <= 1) {
             crawlerRoot.sequence_start_url = propertiesData[0]?.url;
           }
@@ -260,9 +260,18 @@ crawlCommand
         };
       });
       await models.CrawlerRoot.bulkCreate(crawlerRootsData, { updateOnDuplicate: ['url'] });
-      await models.sequelize.query(`ALTER TABLE \`${models.CrawlerRoot.tableName}\` auto_increment = 1;`);
+      await resetAutoIncrementSequence(models.CrawlerRoot.tableName);
     }
   });
+
+async function resetAutoIncrementSequence(tableName: string): Promise<void> {
+  const dialect: string = models.sequelize.options.dialect;
+  if (dialect === 'mysql') {
+    await models.sequelize.query(`ALTER TABLE \`${tableName}\` auto_increment = 1;`);
+  } else if (dialect === 'postgres') {
+    await models.sequelize.query(`ALTER SEQUENCE ${tableName}_id_seq RESTART WITH 1;`);
+  }
+}
 
 async function loadSuumoCrawlRootUrlInfos(rootUrl: string, querySelector: string): Promise<{ url: string; title: string }[]> {
   const crawlRootUrlInfos: { url: string; title: string }[] = [];
