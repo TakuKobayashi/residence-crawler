@@ -12,6 +12,7 @@ const config = {
     collate: process.env.MYSQL_COLLATE,
     encoding: process.env.MYSQL_ENCODING,
   },
+  logging: false,
 };
 
 module.exports = config;

@@ -40,7 +40,12 @@ crawlCommand
       if (crawlerRoot.reached_end_at) {
         currentPage = 1;
       }
+      console.log({
+        name: crawlerRoot.url,
+        url: crawlerRoot.url,
+      });
       while (!crawlerRoot.reached_end_at || crawlerRoot.reached_end_at < dayjs().add(-3, 'day')) {
+        console.log({ page: currentPage });
         const searchUrl = new URL(crawlerRoot.url);
         const residencesData: {
           name: string;
