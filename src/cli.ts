@@ -41,7 +41,7 @@ crawlCommand
         currentPage = 1;
       }
       console.log({
-        name: crawlerRoot.url,
+        name: crawlerRoot.title,
         url: crawlerRoot.url,
       });
       while (!crawlerRoot.reached_end_at || crawlerRoot.reached_end_at < dayjs().add(-3, 'day')) {
