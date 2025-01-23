@@ -11,7 +11,7 @@ const pool = mysql.createPool({
   port: Number(process.env.MYSQL_PORT || 3306),
   user: process.env.MYSQL_USERNAME || '',
   password: process.env.MYSQL_ROOT_PASSWORD || '',
-  connectionLimit: 10, // 接続を張り続けるコネクション数を指定
+  connectionLimit: 20, // 接続を張り続けるコネクション数を指定
 });
 
 export async function importFromSqls() {
