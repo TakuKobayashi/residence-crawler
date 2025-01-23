@@ -37,9 +37,6 @@ crawlCommand
     });
     for (const crawlerRoot of crawlerRoots) {
       let currentPage = crawlerRoot.last_page_number;
-      if (crawlerRoot.reached_end_at) {
-        currentPage = 1;
-      }
       console.log({
         name: crawlerRoot.title,
         url: crawlerRoot.url,
