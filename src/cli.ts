@@ -11,6 +11,8 @@ import { importFromSqls } from './libs/utils/data-importers';
 import { sleep } from './libs/utils/util';
 import models from './sequelize/models';
 import { ImportFroms } from './sequelize/enums/import-froms';
+import { resetAutoIncrementSequence } from './libs/utils/multi-database-tools';
+import { recordRootUrls } from './libs/crawlers/suumo';
 
 import { config } from 'dotenv';
 config();
@@ -242,53 +244,8 @@ crawlCommand
   .command('suumo:rooturl')
   .description('')
   .action(async (options: any) => {
-    const todoufukenAreaUrlInfos = await loadSuumoCrawlRootUrlInfos('https://suumo.jp/chintai/', '.stripe_lists-line');
-    for (const todoufukenAreaUrlInfo of todoufukenAreaUrlInfos) {
-      await sleep(1000);
-      const crawlRootUrlInfos = await loadSuumoCrawlRootUrlInfos(todoufukenAreaUrlInfo.url, 'ul.itemtoplist');
-      if (crawlRootUrlInfos.length <= 0) {
-        continue;
-      }
-      const crawlerRootsData = crawlRootUrlInfos.map((crawlRootUrlInfo) => {
-        return {
-          import_from: ImportFroms.suumo,
-          title: `${todoufukenAreaUrlInfo.title}${crawlRootUrlInfo.title}`,
-          url: crawlRootUrlInfo.url,
-        };
-      });
-      await models.CrawlerRoot.bulkCreate(crawlerRootsData, { updateOnDuplicate: ['url'] });
-      await resetAutoIncrementSequence(models.CrawlerRoot.tableName);
-    }
+    await recordRootUrls();
   });
-
-async function resetAutoIncrementSequence(tableName: string): Promise<void> {
-  const dialect: string = models.sequelize.options.dialect;
-  if (dialect === 'mysql') {
-    await models.sequelize.query(`ALTER TABLE \`${tableName}\` auto_increment = 1;`);
-  } else if (dialect === 'postgres') {
-    await models.sequelize.query(`ALTER SEQUENCE ${tableName}_id_seq RESTART WITH 1;`);
-  }
-}
-
-async function loadSuumoCrawlRootUrlInfos(rootUrl: string, querySelector: string): Promise<{ url: string; title: string }[]> {
-  const crawlRootUrlInfos: { url: string; title: string }[] = [];
-  const searchUrl = new URL(rootUrl);
-  const response = await axios.get(searchUrl.toString());
-  const root = nodeHtmlParser.parse(response.data.toString());
-  const itemDoms = root.querySelectorAll(querySelector);
-  for (const itemDom of itemDoms) {
-    const itemAtagDoms = itemDom.querySelectorAll('a');
-    for (const itemAtagDom of itemAtagDoms) {
-      const aTagAttrs = itemAtagDom.attrs || {};
-      searchUrl.pathname = aTagAttrs.href;
-      crawlRootUrlInfos.push({
-        url: searchUrl.toString(),
-        title: itemAtagDom.text,
-      });
-    }
-  }
-  return crawlRootUrlInfos;
-}
 
 program.addCommand(crawlCommand);
 
