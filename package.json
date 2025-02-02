@@ -5,8 +5,12 @@
   "scripts": {
     "format": "prettier --config .prettierrc --write \"src/**/*.{ts,js}\"",
     "docs": "typedoc --tsconfig tsconfig.json --entryPoints src/**/*.ts --out docs/",
-    "ts-node": "ts-node",
-    "crawler": "ts-node src/cli.ts",
+    "cron:watch": "pm2 start src/cron.js --watch",
+    "cron:start": "pm2 start src/cron.js",
+    "cron:stop": "pm2 stop src/cron.js",
+    "pm2": "pm2",
+    "tsx": "tsx",
+    "crawler": "tsx src/cli.ts",
     "sequelize": "sequelize",
     "sequelize:db:create": "sequelize db:create --charset utf8mb4 --collate utf8mb4_general_ci"
   },
@@ -26,12 +30,14 @@
   "devDependencies": {
     "@types/node": "^22.10.2",
     "commander": "^12.0.0",
+    "cron": "^3.5.0",
     "documentation": "^14.0.3",
     "dotenv": "^16.4.5",
     "fast-glob": "^3.3.2",
+    "pm2": "^5.4.3",
     "prettier": "^3.2.5",
     "sequelize-cli": "^6.6.2",
-    "ts-node": "^10.9.2",
+    "tsx": "^4.19.2",
     "typedoc": "^0.27.5",
     "typescript": "^5.4.5",
     "typings": "^2.1.1"
