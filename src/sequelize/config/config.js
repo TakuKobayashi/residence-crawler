@@ -1,6 +1,5 @@
 require('dotenv').config();
 
-
 //MySQL
 const config = {
   dialect: 'mysql',

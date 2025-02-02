@@ -1,4 +1,4 @@
-const { CronJob } = require('cron');
+import { CronJob } from 'cron';
 
 var job = CronJob.from({
   //実行したい日時 or crontab書式
