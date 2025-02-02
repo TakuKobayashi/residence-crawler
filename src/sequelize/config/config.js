@@ -1,6 +1,7 @@
 require('dotenv').config();
 
-/* MySQL
+
+//MySQL
 const config = {
   dialect: 'mysql',
   database: process.env.MYSQL_DATABASE,
@@ -14,8 +15,8 @@ const config = {
     encoding: process.env.MYSQL_ENCODING,
   },
 };
-*/
 
+/*
 // PostgresSQL
 const config = {
   dialect: 'postgres',
@@ -25,5 +26,6 @@ const config = {
   username: process.env.PGSQL_USERNAME,
   password: process.env.PGSQL_ROOT_PASSWORD,
 };
+*/
 
 module.exports = config;
