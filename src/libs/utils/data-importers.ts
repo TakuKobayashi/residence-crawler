@@ -44,4 +44,5 @@ export async function importFromSqls() {
       });
     });
   }
+  await pool.end();
 }

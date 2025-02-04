@@ -6,7 +6,7 @@ import _ from 'lodash';
 import dayjs from 'dayjs';
 import { normalize } from '@geolonia/normalize-japanese-addresses';
 import { encodeBase32 } from 'geohashing';
-import { exportToInsertSQL } from './libs/utils/data-exporters';
+import { exportToInsertSQL, exportToCSV } from './libs/utils/data-exporters';
 import { importFromSqls } from './libs/utils/data-importers';
 import { sleep } from './libs/utils/util';
 import models from './sequelize/models';
@@ -250,6 +250,13 @@ crawlCommand
 program.addCommand(crawlCommand);
 
 const exportCommand = new Command('export');
+
+exportCommand
+  .command('csv')
+  .description('')
+  .action(async (options: any) => {
+    await exportToCSV();
+  });
 
 exportCommand
   .command('sql')

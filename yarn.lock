@@ -338,6 +338,19 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
+"@json2csv/formatters@^7.0.6":
+  version "7.0.6"
+  resolved "https://registry.yarnpkg.com/@json2csv/formatters/-/formatters-7.0.6.tgz#a4f21daa9d64d6da9a297f7d7b97ba517870f780"
+  integrity sha512-hjIk1H1TR4ydU5ntIENEPgoMGW+Q7mJ+537sDFDbsk+Y3EPl2i4NfFVjw0NJRgT+ihm8X30M67mA8AS6jPidSA==
+
+"@json2csv/plainjs@^7.0.6":
+  version "7.0.6"
+  resolved "https://registry.yarnpkg.com/@json2csv/plainjs/-/plainjs-7.0.6.tgz#e4149b26ec6f1c59a27c72534a91e971be397098"
+  integrity sha512-4Md7RPDCSYpmW1HWIpWBOqCd4vWfIqm53S3e/uzQ62iGi7L3r34fK/8nhOMEe+/eVfCx8+gdSCt1d74SlacQHw==
+  dependencies:
+    "@json2csv/formatters" "^7.0.6"
+    "@streamparser/json" "^0.0.20"
+
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
   resolved "https://registry.yarnpkg.com/@nodelib/fs.scandir/-/fs.scandir-2.1.5.tgz#7619c2eb21b25483f6d167548b4cfd5a7488c3d5"
@@ -440,6 +453,11 @@
   version "9.3.1"
   resolved "https://registry.yarnpkg.com/@shikijs/vscode-textmate/-/vscode-textmate-9.3.1.tgz#afda31f8f42cab70a26f3603f52eae3f1c35d2f7"
   integrity sha512-79QfK1393x9Ho60QFyLti+QfdJzRQCVLFb97kOIV7Eo9vQU/roINgk7m24uv0a7AUvN//RDH36FLjjK48v0s9g==
+
+"@streamparser/json@^0.0.20":
+  version "0.0.20"
+  resolved "https://registry.yarnpkg.com/@streamparser/json/-/json-0.0.20.tgz#28c0255dea8d37f5d679d72c361f01edf70a770a"
+  integrity sha512-VqAAkydywPpkw63WQhPVKCD3SdwXuihCUVZbbiY3SfSTGQyHmwRoq27y4dmJdZuJwd5JIlQoMPyGvMbUPY0RKQ==
 
 "@tootallnate/quickjs-emscripten@^0.23.0":
   version "0.23.0"

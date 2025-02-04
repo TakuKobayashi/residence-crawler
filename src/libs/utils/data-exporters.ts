@@ -1,9 +1,20 @@
-import models from '../../sequelize/models';
 import databaseConfig from '../../sequelize/config/config';
 import path from 'path';
 import _ from 'lodash';
 import fs from 'fs';
 import readline from 'readline';
+import { Parser } from '@json2csv/plainjs';
+import mysql from 'mysql2/promise';
+import { Json2CSVBaseOptions } from '@json2csv/plainjs/dist/mjs/BaseParser';
+
+const pool = mysql.createPool({
+  database: process.env.MYSQL_DATABASE || '',
+  host: process.env.MYSQL_HOST || '',
+  port: Number(process.env.MYSQL_PORT || 3306),
+  user: process.env.MYSQL_USERNAME || '',
+  password: process.env.MYSQL_ROOT_PASSWORD || '',
+  connectionLimit: 20, // 接続を張り続けるコネクション数を指定
+});
 
 const util = require('node:util');
 const child_process = require('node:child_process');
@@ -27,6 +38,79 @@ export function loadSavedSqlRootDirPath(): string {
     fs.mkdirSync(saveSqlDirPath, { recursive: true });
   }
   return saveSqlDirPath;
+}
+
+export function loadSavedCsvRootDirPath(): string {
+  const appDir = path.dirname(require.main?.filename || '');
+  const saveSqlDirPath = path.join(appDir, `..`, 'data', 'csvs', `tables`);
+  // cli.ts がある場所なのでSQLを保管する場所を指定する
+  if (!fs.existsSync(saveSqlDirPath)) {
+    fs.mkdirSync(saveSqlDirPath, { recursive: true });
+  }
+  return saveSqlDirPath;
+}
+
+export async function exportToCSV() {
+  const tableNames = await loadExistTableNames();
+  for (const tableName of tableNames) {
+    let rowCounter = 0;
+    let saveFileCounter = 0;
+    let dividedCsvFileStream: fs.WriteStream | undefined;
+    await findByBatches({
+      tableName: tableName,
+      batchSize: 1000,
+      inBatches: async (data) => {
+        rowCounter = rowCounter + data.length;
+        const csvParserOptions: Json2CSVBaseOptions<object, object> = {};
+        const saveFileCount = Math.ceil(rowCounter / dividedLinesCount);
+        if (saveFileCounter !== saveFileCount) {
+          const splitDirCount = Math.ceil(saveFileCount / dividDirectoryFileCount);
+          await dividedCsvFileStream?.close();
+          const saveDirPath = path.join(loadSavedCsvRootDirPath(), tableName, splitDirCount.toString());
+          if (!fs.existsSync(saveDirPath)) {
+            fs.mkdirSync(saveDirPath, { recursive: true });
+          }
+          const willSaveFilePath = path.join(saveDirPath, `${tableName}_${saveFileCount}.csv`);
+          if (fs.existsSync(willSaveFilePath)) {
+            fs.unlinkSync(willSaveFilePath);
+          }
+          dividedCsvFileStream = fs.createWriteStream(willSaveFilePath);
+          csvParserOptions.header = true;
+        } else {
+          csvParserOptions.header = false;
+        }
+        const parser = new Parser(csvParserOptions);
+        const csv = parser.parse(data);
+        dividedCsvFileStream?.write(`${csv}\n`);
+        saveFileCounter = saveFileCount;
+      },
+    });
+    await dividedCsvFileStream?.close();
+  }
+  await pool.end();
+}
+
+async function findByBatches({
+  tableName,
+  batchSize = 1000,
+  inBatches,
+}: {
+  tableName: string;
+  batchSize: number;
+  inBatches: (data: any[]) => Promise<void>;
+}) {
+  let lastId = 0;
+  while (true) {
+    const sql = `SELECT * from ${tableName} WHERE id > ${lastId} ORDER BY id ASC LIMIT ${batchSize};`;
+    const [queryResult, fieldPacket] = await pool.query(sql);
+    const results: any[] = [queryResult].flat();
+    inBatches(results);
+    if (results.length < batchSize) {
+      break;
+    }
+    const maxIdResult = _.maxBy(results, (cell) => cell.id);
+    lastId = maxIdResult?.id || 0;
+  }
 }
 
 export async function exportToInsertSQL() {
@@ -112,8 +196,8 @@ async function execFileLineCount(targetFile: string) {
 }
 
 export async function loadExistTableNames(): Promise<string[]> {
-  const allTables = await models.sequelize.query(`SHOW TABLES`);
-  const existTables: ShowTablesResult[] = _.uniq(allTables.flat());
+  const [allTables, fieldPacket] = await pool.query(`SHOW TABLES;`);
+  const existTables: ShowTablesResult[] = _.uniq([allTables].flat());
   const tables: string[] = [];
   for (const existTable of existTables) {
     if (excludeExportTableNames.includes(existTable['Tables_in_residence_crawler'])) {
