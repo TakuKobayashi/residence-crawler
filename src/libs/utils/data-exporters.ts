@@ -1,20 +1,11 @@
 import databaseConfig from '../../sequelize/config/config';
+import { DatabaseConnectionManager } from './database-connection-manager';
 import path from 'path';
 import _ from 'lodash';
 import fs from 'fs';
 import readline from 'readline';
 import { Parser } from '@json2csv/plainjs';
-import mysql from 'mysql2/promise';
 import { Json2CSVBaseOptions } from '@json2csv/plainjs/dist/mjs/BaseParser';
-
-const pool = mysql.createPool({
-  database: process.env.MYSQL_DATABASE || '',
-  host: process.env.MYSQL_HOST || '',
-  port: Number(process.env.MYSQL_PORT || 3306),
-  user: process.env.MYSQL_USERNAME || '',
-  password: process.env.MYSQL_ROOT_PASSWORD || '',
-  connectionLimit: 20, // 接続を張り続けるコネクション数を指定
-});
 
 const util = require('node:util');
 const child_process = require('node:child_process');
@@ -23,6 +14,8 @@ interface ShowTablesResult {
   Tables_in_resource_crawler: string;
 }
 
+const connectioManager = new DatabaseConnectionManager();
+
 // 分割するファイルの数がこの数字を超えたら新しくディレクトリを作るようにする
 const dividDirectoryFileCount = 100;
 // ファイルを分割する行数(出来上がるSQLファイルのサイズが100MBを超えない範囲で調整)
@@ -30,7 +23,7 @@ const dividedLinesCount = 200000;
 
 const excludeExportTableNames = ['SequelizeMeta'];
 
-export function loadSavedSqlRootDirPath(): string {
+function loadSavedSqlRootDirPath(): string {
   const appDir = path.dirname(require.main?.filename || '');
   const saveSqlDirPath = path.join(appDir, `..`, 'data', 'sqls', `tables`);
   // cli.ts がある場所なのでSQLを保管する場所を指定する
@@ -40,7 +33,7 @@ export function loadSavedSqlRootDirPath(): string {
   return saveSqlDirPath;
 }
 
-export function loadSavedCsvRootDirPath(): string {
+function loadSavedCsvRootDirPath(): string {
   const appDir = path.dirname(require.main?.filename || '');
   const saveSqlDirPath = path.join(appDir, `..`, 'data', 'csvs', `tables`);
   // cli.ts がある場所なのでSQLを保管する場所を指定する
@@ -87,7 +80,7 @@ export async function exportToCSV() {
     });
     await dividedCsvFileStream?.close();
   }
-  await pool.end();
+  await connectioManager.release();
 }
 
 async function findByBatches({
@@ -102,7 +95,7 @@ async function findByBatches({
   let lastId = 0;
   while (true) {
     const sql = `SELECT * from ${tableName} WHERE id > ${lastId} ORDER BY id ASC LIMIT ${batchSize};`;
-    const [queryResult, fieldPacket] = await pool.query(sql);
+    const [queryResult, fieldPacket] = await connectioManager.query(sql);
     const results: any[] = [queryResult].flat();
     inBatches(results);
     if (results.length < batchSize) {
@@ -140,6 +133,7 @@ export async function exportToInsertSQL() {
     mysqlDumpAndSpritFilesRoutinePromises.push(mysqlDumpAndSpritFilesRoutine(exportFullDumpSql, tableName, mysqldumpCommands.join(' ')));
   }
   await Promise.all(mysqlDumpAndSpritFilesRoutinePromises);
+  await connectioManager.release();
 }
 
 async function mysqlDumpAndSpritFilesRoutine(exportFullDumpSql: string, tableName: string, mysqldumpCommand: string): Promise<void> {
@@ -195,8 +189,8 @@ async function execFileLineCount(targetFile: string) {
   return parseInt(stdout, 10);
 }
 
-export async function loadExistTableNames(): Promise<string[]> {
-  const [allTables, fieldPacket] = await pool.query(`SHOW TABLES;`);
+async function loadExistTableNames(): Promise<string[]> {
+  const [allTables, fieldPacket] = await connectioManager.query(`SHOW TABLES;`);
   const existTables: ShowTablesResult[] = _.uniq([allTables].flat());
   const tables: string[] = [];
   for (const existTable of existTables) {
