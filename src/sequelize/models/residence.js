@@ -17,7 +17,16 @@ module.exports = (sequelize, DataTypes) => {
       address: DataTypes.STRING,
       max_floor: DataTypes.STRING,
       route_caption: DataTypes.STRING,
-      constructed_date: DataTypes.DATE,
+      constructed_date: {
+        type: DataTypes.DATE,
+        field: 'constructed_date',
+        set(value) {
+          if (!value) {
+            return null;
+          }
+          return value.toISOString().replace(/\..+/g, '')
+        },
+      },
       lat: DataTypes.FLOAT,
       lon: DataTypes.FLOAT,
       geohash: DataTypes.STRING,

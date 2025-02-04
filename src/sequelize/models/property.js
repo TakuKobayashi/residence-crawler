@@ -27,7 +27,16 @@ module.exports = (sequelize, DataTypes) => {
       gratuity_fee: DataTypes.FLOAT,
       floor_plan: DataTypes.STRING,
       area: DataTypes.FLOAT,
-      infomation_updated_date: DataTypes.DATE,
+      infomation_updated_date: {
+        type: DataTypes.DATE,
+        field: 'infomation_updated_date',
+        set(value) {
+          if (!value) {
+            return null;
+          }
+          return value.toISOString().replace(/\..+/g, '')
+        },
+      },
       publish_state: DataTypes.INTEGER,
       extra_info: DataTypes.STRING,
     },

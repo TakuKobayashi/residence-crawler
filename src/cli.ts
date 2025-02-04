@@ -7,7 +7,7 @@ import dayjs from 'dayjs';
 import { normalize } from '@geolonia/normalize-japanese-addresses';
 import { encodeBase32 } from 'geohashing';
 import { exportToInsertSQL, exportToCSV } from './libs/utils/data-exporters';
-import { importFromSqls } from './libs/utils/data-importers';
+import { importFromSqls, importFromCsvs } from './libs/utils/data-importers';
 import { sleep } from './libs/utils/util';
 import models from './sequelize/models';
 import { ImportFroms } from './sequelize/enums/import-froms';
@@ -274,6 +274,13 @@ importCommand
   .description('')
   .action(async (options: any) => {
     await importFromSqls();
+  });
+
+importCommand
+  .command('csv')
+  .description('')
+  .action(async (options: any) => {
+    importFromCsvs();
   });
 
 program.addCommand(importCommand);
