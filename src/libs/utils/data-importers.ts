@@ -4,6 +4,7 @@ import fs from 'fs';
 import fg from 'fast-glob';
 import readline, { Interface } from 'readline';
 import { parse } from 'csv-parse/sync';
+import cliProgress from 'cli-progress';
 import { DatabaseConnectionManager } from './database-connection-manager';
 import { resetAutoIncrementSequence } from '../utils/multi-database-tools';
 import models from '../../sequelize/models';
@@ -12,6 +13,8 @@ export async function importFromSqls() {
   const connectioManager = new DatabaseConnectionManager();
   const appDir = path.dirname(require.main?.filename || '');
   const sqlFilePathes = fg.sync([...appDir.split(path.sep), `..`, 'data', 'sqls', `tables`, '**', '*.sql'].join('/'), { dot: true });
+  const progressBar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
+  progressBar.start(sqlFilePathes.length, 0);
   for (const sqlFilePath of sqlFilePathes) {
     const executeSqlPromises: Promise<any>[] = [];
     await readlineTextFileRoutine(sqlFilePath, async (lineText, reader) => {
@@ -26,7 +29,9 @@ export async function importFromSqls() {
       }
       return executeQueryPromise;
     });
+    progressBar.increment();
   }
+  progressBar.stop();
   await connectioManager.release();
 }
 
@@ -58,12 +63,16 @@ export async function importFromCsvs() {
   });
   const appDir = path.dirname(require.main?.filename || '');
   const csvFilePathes = fg.sync([...appDir.split(path.sep), `..`, 'data', 'csvs', `tables`, '**', '*.csv'].join('/'), { dot: true });
+  const progressBar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
+  progressBar.start(csvFilePathes.length, 0);
   for (const csvFilePath of csvFilePathes) {
     const targetModelName = modelNames.find((modelName) => csvFilePath.includes(models[modelName].tableName));
     const csvData = fs.readFileSync(csvFilePath);
     const importValues = parse(csvData, { columns: true });
     await models[targetModelName].bulkCreate(importValues, { updateOnDuplicate: ['id'] });
     await resetAutoIncrementSequence(models[targetModelName].tableName);
+    progressBar.increment();
   }
+  progressBar.stop();
   models.sequelize.options.logging = logging;
 }
