@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
           if (!value) {
             return null;
           }
-          return value.toISOString().replace(/\..+/g, '')
+          return value.toISOString().replace(/\..+/g, '');
         },
       },
       lat: DataTypes.FLOAT,
