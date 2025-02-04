@@ -72,9 +72,11 @@ export async function exportToCSV() {
         } else {
           csvParserOptions.header = false;
         }
-        const parser = new Parser(csvParserOptions);
-        const csv = parser.parse(data);
-        dividedCsvFileStream?.write(`${csv}\n`);
+        if (data.length > 0) {
+          const parser = new Parser(csvParserOptions);
+          const csv = parser.parse(data);
+          dividedCsvFileStream?.write(`${csv}\n`);
+        }
         saveFileCounter = saveFileCount;
       },
     });
