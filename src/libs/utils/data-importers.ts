@@ -71,7 +71,10 @@ export async function importFromCsvs(options: { excludeModels: string[] } = { ex
     if (targetModelName) {
       const csvData = fs.readFileSync(csvFilePath);
       const importValues = parse(csvData, { columns: true });
-      await models[targetModelName].bulkCreate(importValues, { updateOnDuplicate: ['id'] });
+      const chunkImportValues = _.chunk(importValues, 1000);
+      for (const chunkData of chunkImportValues) {
+        await models[targetModelName].bulkCreate(chunkData, { updateOnDuplicate: ['id'] });
+      }
       await resetAutoIncrementSequence(models[targetModelName].tableName);
     }
     progressBar.increment();
