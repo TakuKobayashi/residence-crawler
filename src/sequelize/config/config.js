@@ -1,5 +1,6 @@
 require('dotenv').config();
 
+/*
 //MySQL
 const config = {
   dialect: 'mysql',
@@ -15,7 +16,7 @@ const config = {
   },
 };
 
-/*
+
 // PostgresSQL
 const config = {
   dialect: 'postgres',
@@ -26,5 +27,20 @@ const config = {
   password: process.env.PGSQL_ROOT_PASSWORD,
 };
 */
+
+const config = {
+  dialect: 'postgres',
+  database: process.env.XATA_PGSQL_DATABASE,
+  host: process.env.XATA_PGSQL_HOST,
+  port: process.env.XATA_PGSQL_PORT,
+  username: process.env.XATA_PGSQL_USERNAME,
+  password: process.env.XATA_PGSQL_PASSWORD,
+  dialectOptions: {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false,
+    },
+  },
+};
 
 module.exports = config;

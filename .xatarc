@@ -1,0 +1,9 @@
+'use strict';
+require('dotenv').config();    // don't forget to require dotenv
+
+module.exports = {
+  "databaseURL": process.env.XATA_DATABASE_URL,
+  "codegen": {
+    "output": "src/xata/xata.ts"
+  }
+};
