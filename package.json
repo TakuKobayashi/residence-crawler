@@ -25,11 +25,14 @@
     "lodash": "^4.17.21",
     "mysql2": "^3.9.7",
     "node-html-parser": "^7.0.1",
+    "pg": "^8.13.1",
+    "pg-hstore": "^2.3.4",
     "sequelize": "^6.37.3",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
+    "@types/pg": "^8.11.11",
     "commander": "^12.0.0",
     "cron": "^3.5.0",
     "documentation": "^14.0.3",

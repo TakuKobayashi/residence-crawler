@@ -15,7 +15,7 @@ const config = {
     encoding: process.env.MYSQL_ENCODING,
   },
 };
-
+*/
 
 // PostgresSQL
 const config = {
@@ -26,8 +26,9 @@ const config = {
   username: process.env.PGSQL_USERNAME,
   password: process.env.PGSQL_ROOT_PASSWORD,
 };
-*/
 
+/*
+// XATA Settings
 const config = {
   dialect: 'postgres',
   database: process.env.XATA_PGSQL_DATABASE,
@@ -37,10 +38,11 @@ const config = {
   password: process.env.XATA_PGSQL_PASSWORD,
   dialectOptions: {
     ssl: {
-      require: true,
-      rejectUnauthorized: false,
-    },
-  },
+        require: true,
+        rejectUnauthorized: false
+    }
+ },
 };
+*/
 
 module.exports = config;
