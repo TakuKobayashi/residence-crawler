@@ -280,7 +280,7 @@ importCommand
   .command('csv')
   .description('')
   .action(async (options: any) => {
-    importFromCsvs();
+    await importFromCsvs();
   });
 
 program.addCommand(importCommand);
