@@ -4,7 +4,7 @@ import { exportToCSV } from './libs/utils/data-exporters';
 
 var job = CronJob.from({
   //実行したい日時 or crontab書式
-  cronTime: '* * 16 * *',
+  cronTime: '0 16 * * *',
 
   //指定時に実行したい関数
   onTick: async () => {
