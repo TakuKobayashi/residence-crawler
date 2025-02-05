@@ -21,7 +21,7 @@ export async function crawlPropertyInfos() {
       name: crawlerRoot.title,
       url: crawlerRoot.url,
     });
-    while (!crawlerRoot.reached_end_at || crawlerRoot.reached_end_at < dayjs().add(-3, 'day')) {
+    while (!crawlerRoot.reached_end_at || crawlerRoot.reached_end_at < dayjs().add(-1, 'day')) {
       console.log({ page: currentPage });
       const searchUrl = new URL(crawlerRoot.url);
       const residencesData: {
