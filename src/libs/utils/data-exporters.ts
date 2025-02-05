@@ -6,6 +6,7 @@ import fs from 'fs';
 import readline from 'readline';
 import { Parser } from '@json2csv/plainjs';
 import { Json2CSVBaseOptions } from '@json2csv/plainjs/dist/mjs/BaseParser';
+import config from '../../sequelize/config/config';
 
 const util = require('node:util');
 const child_process = require('node:child_process');
@@ -97,8 +98,19 @@ async function findByBatches({
   let lastId = 0;
   while (true) {
     const sql = `SELECT * from ${tableName} WHERE id > ${lastId} ORDER BY id ASC LIMIT ${batchSize};`;
-    const [queryResult, fieldPacket] = await connectioManager.query(sql);
-    const results: any[] = [queryResult].flat();
+    const queryResult = await connectioManager.query(sql);
+    const results: any[] = [];
+    if (queryResult.rows) {
+      for (const row of queryResult.rows) {
+        results.push(row);
+      }
+    } else {
+      const rows = _.uniq([queryResult[0]].flat());
+      for (const row of rows) {
+        results.push(row);
+      }
+    }
+
     inBatches(results);
     if (results.length < batchSize) {
       break;
@@ -192,14 +204,26 @@ async function execFileLineCount(targetFile: string) {
 }
 
 async function loadExistTableNames(): Promise<string[]> {
-  const [allTables, fieldPacket] = await connectioManager.query(`SHOW TABLES;`);
-  const existTables: ShowTablesResult[] = _.uniq([allTables].flat());
+  let showTableSql = `SHOW TABLES;`;
+  if (config.dialect === 'postgres') {
+    showTableSql = `SELECT table_name FROM information_schema.tables WHERE table_schema='public'AND table_type='BASE TABLE';`;
+  }
   const tables: string[] = [];
-  for (const existTable of existTables) {
-    if (excludeExportTableNames.includes(existTable['Tables_in_residence_crawler'])) {
-      continue;
+  const result = await connectioManager.query(showTableSql);
+  if (result.rows) {
+    for (const row of result.rows) {
+      if (row.table_name && !excludeExportTableNames.includes(row.table_name)) {
+        tables.push(row.table_name);
+      }
     }
-    tables.push(existTable['Tables_in_residence_crawler']);
+  } else {
+    const existTables: ShowTablesResult[] = _.uniq([result[0]].flat());
+    for (const existTable of existTables) {
+      if (excludeExportTableNames.includes(existTable['Tables_in_residence_crawler'])) {
+        continue;
+      }
+      tables.push(existTable['Tables_in_residence_crawler']);
+    }
   }
   return tables;
 }

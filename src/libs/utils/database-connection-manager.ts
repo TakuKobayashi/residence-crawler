@@ -1,6 +1,6 @@
 import mysql from 'mysql2/promise';
-import pg from 'pg'
-import config from "../../sequelize/config/config";
+import pg from 'pg';
+import config from '../../sequelize/config/config';
 
 type DirectType = 'mysql' | 'postgres';
 
@@ -8,7 +8,7 @@ export class DatabaseConnectionManager {
   private dbConnectionPool?: mysql.Pool | pg.Pool;
   private dialect: DirectType;
 
-  constructor () {
+  constructor() {
     this.dialect = config.dialect;
   }
 
@@ -21,7 +21,7 @@ export class DatabaseConnectionManager {
     if (this.dbConnectionPool) {
       return this.dbConnectionPool;
     }
-    if (this.dialect === "mysql") {
+    if (this.dialect === 'mysql') {
       this.dbConnectionPool = mysql.createPool({
         database: process.env.MYSQL_DATABASE || '',
         host: process.env.MYSQL_HOST || '',
