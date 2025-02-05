@@ -280,6 +280,7 @@ importCommand
   .command('csv')
   .description('')
   .action(async (options: any) => {
+//    await importFromCsvs({ excludeModels: ['PropertyResource'] });
     await importFromCsvs();
   });
 
