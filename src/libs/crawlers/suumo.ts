@@ -6,6 +6,7 @@ import dayjs from 'dayjs';
 import { sleep } from '../utils/util';
 import { resetAutoIncrementSequence } from '../utils/multi-database-tools';
 import { ImportFroms } from '../../sequelize/enums/import-froms';
+import cliProgress from 'cli-progress';
 import models from '../../sequelize/models';
 
 export async function crawlPropertyInfos() {
@@ -15,6 +16,8 @@ export async function crawlPropertyInfos() {
     },
     order: [['priority', 'DESC']],
   });
+  const progressBar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
+  progressBar.start(crawlerRoots.length, 0);
   for (const crawlerRoot of crawlerRoots) {
     let currentPage = crawlerRoot.last_page_number;
     console.log({
@@ -22,7 +25,6 @@ export async function crawlPropertyInfos() {
       url: crawlerRoot.url,
     });
     while (!crawlerRoot.reached_end_at || crawlerRoot.reached_end_at < dayjs().add(-1, 'day')) {
-      console.log({ page: currentPage });
       const searchUrl = new URL(crawlerRoot.url);
       const residencesData: {
         name: string;
@@ -215,7 +217,9 @@ export async function crawlPropertyInfos() {
       currentPage = currentPage + 1;
       await sleep(1000);
     }
+    progressBar.increment();
   }
+  progressBar.stop();
 }
 
 export async function recordRootUrls() {
