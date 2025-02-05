@@ -55,11 +55,12 @@ async function readlineTextFileRoutine(filePath: string, onReadLine: (lineText: 
   });
 }
 
-export async function importFromCsvs() {
+export async function importFromCsvs(options: { excludeModels: string[] } = { excludeModels: [] }) {
   const logging = models.sequelize.options.logging;
   models.sequelize.options.logging = false;
+  const excludeModels = [...options.excludeModels, 'sequelize', 'Sequelize'];
   const modelNames = Object.keys(models).filter((modelName) => {
-    return !['sequelize', 'Sequelize'].includes(modelName);
+    return !excludeModels.includes(modelName);
   });
   const appDir = path.dirname(require.main?.filename || '');
   const csvFilePathes = fg.sync([...appDir.split(path.sep), `..`, 'data', 'csvs', `tables`, '**', '*.csv'].join('/'), { dot: true });
@@ -67,10 +68,12 @@ export async function importFromCsvs() {
   progressBar.start(csvFilePathes.length, 0);
   for (const csvFilePath of csvFilePathes) {
     const targetModelName = modelNames.find((modelName) => csvFilePath.includes(models[modelName].tableName));
-    const csvData = fs.readFileSync(csvFilePath);
-    const importValues = parse(csvData, { columns: true });
-    await models[targetModelName].bulkCreate(importValues, { updateOnDuplicate: ['id'] });
-    await resetAutoIncrementSequence(models[targetModelName].tableName);
+    if (targetModelName) {
+      const csvData = fs.readFileSync(csvFilePath);
+      const importValues = parse(csvData, { columns: true });
+      await models[targetModelName].bulkCreate(importValues, { updateOnDuplicate: ['id'] });
+      await resetAutoIncrementSequence(models[targetModelName].tableName);
+    }
     progressBar.increment();
   }
   progressBar.stop();
